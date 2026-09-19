@@ -12,7 +12,12 @@ return {
     -- highlighting with: Query error ... Invalid field name "operator".
     ensure_installed = {
       "astro",
+      "bash",
       "css",
+      "regex",
+      "sql",
+      "toml",
+      "yaml",
       "dockerfile",
       "json",
       "jsdoc",

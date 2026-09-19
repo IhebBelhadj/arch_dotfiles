@@ -53,7 +53,13 @@ return {
 
       -- the key is the server that is being setup with `lspconfig`
       -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
-      pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end, -- or a custom handler function can be passed
+      -- NOTE: AstroLSP v4 (AstroNvim v6) invokes handlers as `handler(server)` with a
+      -- SINGLE argument; AstroNvim v4 passed `handler(server, server_opts)`. The old
+      -- two-arg handler below received opts = nil, so lspconfig's setup(nil) blew up
+      -- inside tbl_deep_extend ("expected table, got nil") and aborted astrolsp's
+      -- entire config. Servers listed in `servers` are now enabled via vim.lsp.enable
+      -- by default, so no custom handler is needed here.
+      -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end,
       -- pyright = function(_, opts)
       --   local project_root = "/home/iheb/projects/playground/airflow_docker" -- Ensure this is correct
       --   local current_dir = vim.fn.getcwd()

@@ -42,6 +42,18 @@ return {
     -- Mappings can be configured through AstroCore as well.
     -- NOTE: keycodes follow the casing in the vimdocs. For example, `<Leader>` must be capitalized
     mappings = {
+      -- Ctrl+S saves in insert mode too.
+      --
+      -- Neovim 0.11+ binds insert-mode <C-S> to vim.lsp.buf.signature_help()
+      -- as a built-in default, and AstroNvim v6 no longer overrides it (v4
+      -- did). So pressing Ctrl+S while still in insert mode asked for
+      -- signature help instead of writing the file, and printed
+      --   vim.lsp: method "textDocument/signatureHelp" is not supported ...
+      -- on any buffer whose language servers do not implement it.
+      -- Signature help is still on <Leader>lh and gK in normal mode.
+      i = {
+        ["<C-S>"] = { "<Cmd>silent! update! | redraw<CR>", desc = "Force write" },
+      },
       -- first key is the mode
       n = {
         -- second key is the lefthand side of the map

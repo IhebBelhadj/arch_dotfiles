@@ -17,8 +17,15 @@ git clone <this-repo> ~/dotfiles && cd ~/dotfiles
 ./install.sh hyde        # clone HyDE, then run ITS interactive installer
 ./install.sh dotfiles    # stow this repo over HyDE's defaults, then bootstrap
 ./install.sh services    # re-enable the systemd units
+./install.sh extras      # npm globals, go binaries, conda env
 ./install.sh tools       # oh-my-zsh, nvim plugins (lazy-lock), Mason tools
 ```
+
+**`chaotic-aur` is required.** 19 explicitly-installed packages come from it
+(`packages/requires-chaotic-aur.txt`) -- brave-bin, zen-browser-bin,
+google-chrome, anaconda and others. A fresh Arch install does not have that
+repo, so `install.sh packages` sets it up (key, mirrorlist, pacman.conf) before
+installing anything.
 
 Log out and back in, then `hyde-shell reload` to regenerate the theme-derived
 files.
@@ -39,7 +46,23 @@ after and `git checkout .` to keep this repo's versions.
 | nvim plugins | `lazy-lock.json` (exact revisions) |
 | Mason LSP servers / linters (~640 MB) | `install.sh tools` |
 | oh-my-zsh + zsh-256color | `install.sh tools` |
+| 10 npm globals, `kind` (go), conda `backend-env` | `packages/npm-global.txt`, `go-bin.txt`, `conda-backend-env.yml` |
 | **Not covered:** `/etc`, partitioning, bootloader, users, secrets, SSH keys | you |
+| **Not covered:** `/opt/containerd` (manual), AppImages (Pencil, Cursor) | you |
+
+### Package channels audited
+
+Everything below was checked, so the manifests are not just "whatever pacman knew":
+
+| channel | found |
+|---|---|
+| pacman explicit | 199 (187 native incl. 19 chaotic-aur, 12 AUR) |
+| npm global | 10 |
+| go install | 1 (`kind`) |
+| conda envs | 1 user env (`backend-env`); base belongs to the `anaconda` package |
+| pipx / uv / cargo / flatpak | none installed |
+| `~/.local/bin` | 41 executables, nearly all pip shims from `/opt/anaconda` |
+| `/opt` | all pacman-owned except `containerd` |
 
 If a target file already exists, stow refuses rather than clobbering it.
 Use `stow --adopt <pkg>` to pull the existing file into the repo instead,

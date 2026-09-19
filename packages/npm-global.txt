@@ -1,0 +1,10 @@
+cli
+gemini-cli
+github-copilot-cli
+node-gyp
+nopt
+pnpm
+qwen-code
+semver
+vercel
+yarn

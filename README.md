@@ -12,6 +12,7 @@ sudo pacman -S stow
 git clone <this-repo> ~/dotfiles
 cd ~/dotfiles
 stow hypr waybar kitty zsh tmux starship hyde nvim bin
+./bootstrap.sh
 ```
 
 Then log out and back in, and run `hyde-shell reload` to regenerate the

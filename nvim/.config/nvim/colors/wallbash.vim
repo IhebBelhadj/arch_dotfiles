@@ -1,1 +1,0 @@
-/home/iheb/.config/vim/colors/wallbash.vim

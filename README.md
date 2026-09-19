@@ -7,16 +7,39 @@ Each top-level directory is a **stow package** whose inner tree mirrors `$HOME`.
 
 ## Restore on a new machine
 
+This repo alone is NOT a full system image -- it holds configuration, plus
+manifests for everything else. Order matters, so `install.sh` is split into
+steps rather than one blind command:
+
 ```sh
-sudo pacman -S stow
-git clone <this-repo> ~/dotfiles
-cd ~/dotfiles
-stow hypr waybar kitty zsh tmux starship hyde nvim bin
-./bootstrap.sh
+git clone <this-repo> ~/dotfiles && cd ~/dotfiles
+./install.sh packages    # yay, then repo + AUR packages from packages/
+./install.sh hyde        # clone HyDE, then run ITS interactive installer
+./install.sh dotfiles    # stow this repo over HyDE's defaults, then bootstrap
+./install.sh services    # re-enable the systemd units
+./install.sh tools       # oh-my-zsh, nvim plugins (lazy-lock), Mason tools
 ```
 
-Then log out and back in, and run `hyde-shell reload` to regenerate the
-theme-derived files (see below).
+Log out and back in, then `hyde-shell reload` to regenerate the theme-derived
+files.
+
+**HyDE must be installed before stowing.** Its installer writes its own
+`~/.config/hypr`, `~/.config/waybar` etc.; stowing afterwards replaces the ones
+this repo owns. `install.sh dotfiles` uses `stow --adopt`, so run `git diff`
+after and `git checkout .` to keep this repo's versions.
+
+### What is tracked vs. rebuilt vs. gone
+
+| | where it comes from |
+|---|---|
+| Your configs | this repo (`stow`) |
+| ~199 packages, 12 AUR | `packages/*.txt` |
+| 14 system + 6 user services | `packages/services-*.txt` |
+| HyDE framework, themes, wallpapers (~500 MB) | HyDE's installer |
+| nvim plugins | `lazy-lock.json` (exact revisions) |
+| Mason LSP servers / linters (~640 MB) | `install.sh tools` |
+| oh-my-zsh + zsh-256color | `install.sh tools` |
+| **Not covered:** `/etc`, partitioning, bootloader, users, secrets, SSH keys | you |
 
 If a target file already exists, stow refuses rather than clobbering it.
 Use `stow --adopt <pkg>` to pull the existing file into the repo instead,

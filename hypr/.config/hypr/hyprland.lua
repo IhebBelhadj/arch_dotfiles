@@ -48,18 +48,19 @@ end
 -- so there is no rounding. Set scale = 1 for native 1:1.
 hl.monitor({ output = "eDP-1", mode = "1920x1080@60", position = "0x0", scale = 1.25 })
 
--- Traditional (non-reversed) scrolling. Both pointer devices come up with a
--- scroll factor of -1, which inverts the direction; 1.0 restores it.
+-- Scroll direction. `natural_scroll` is the only knob that controls direction
+-- ("Inverts scrolling direction" per the Hyprland schema):
+--   false = traditional  -- fingers/wheel down scrolls the page down
+--   true  = natural/mac  -- fingers down drags the content down
+-- `scroll_factor` is only a speed multiplier, not a direction control; the -1
+-- that `hyprctl devices` reports for an unconfigured device is its
+-- "inherit the global value" sentinel, not an inversion.
 hl.config({
 	input = {
 		natural_scroll = false,
-		scroll_factor = 1.0,
-		touchpad = { natural_scroll = false, scroll_factor = 1.0 },
+		touchpad = { natural_scroll = false },
 	},
 })
-
-hl.device({ name = "elan0718:00-04f3:30fd-touchpad", natural_scroll = false, scroll_factor = 1.0 })
-hl.device({ name = "elan0718:00-04f3:30fd-mouse", natural_scroll = false, scroll_factor = 1.0 })
 
 -- Swap Caps Lock and Escape. Both directions: Caps acts as Escape and Escape
 -- acts as Caps Lock. Use "caps:escape" instead to only remap Caps, leaving

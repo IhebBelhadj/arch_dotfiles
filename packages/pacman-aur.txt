@@ -1,0 +1,12 @@
+appimagelauncher
+electron36-bin
+faudio
+gnu-netcat
+isw
+lib32-faudio
+pencil
+pokego-bin
+unetbootin
+vieb-bin
+wl-gammarelay
+yay-debug

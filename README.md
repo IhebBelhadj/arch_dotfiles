@@ -24,17 +24,17 @@ then `git diff` to see whether you want the repo's version or the machine's.
 
 ## Packages
 
-| Package | Contents |
-|---|---|
-| `hypr` | `hyprland.lua` (monitor scale, scroll, caps/esc swap), `hyde.conf`, idle/sunset |
-| `waybar` | `modules/network-override.json` (wifi picker on click), `user-style.css` |
-| `kitty` | `kitty.conf` (padding override) |
-| `zsh` | `.hyde.zshrc` (the file HyDE actually sources), `user.zsh`, `.zshrc`, `omz-custom` |
-| `tmux` | `.tmux.conf` incl. wallbash theme hook |
-| `starship` | `starship.toml` (battery indicator disabled) |
-| `hyde` | `config.toml` (animation `duration_scale`), `wallbash/` templates + scripts |
-| `nvim` | AstroNvim v6 config |
-| `bin` | `wifimenu.sh` — rofi wifi picker used by waybar |
+| Package    | Contents                                                                           |
+| ---------- | ---------------------------------------------------------------------------------- |
+| `hypr`     | `hyprland.lua` (monitor scale, scroll, caps/esc swap), `hyde.conf`, idle/sunset    |
+| `waybar`   | `modules/network-override.json` (wifi picker on click), `user-style.css`           |
+| `kitty`    | `kitty.conf` (padding override)                                                    |
+| `zsh`      | `.hyde.zshrc` (the file HyDE actually sources), `user.zsh`, `.zshrc`, `omz-custom` |
+| `tmux`     | `.tmux.conf` incl. wallbash theme hook                                             |
+| `starship` | `starship.toml` (battery indicator disabled)                                       |
+| `hyde`     | `config.toml` (animation `duration_scale`), `wallbash/` templates + scripts        |
+| `nvim`     | AstroNvim v6 config                                                                |
+| `bin`      | `wifimenu.sh` — rofi wifi picker used by waybar                                    |
 
 ## What is deliberately NOT tracked
 
@@ -53,7 +53,7 @@ Also untracked: `~/.config/hyde/themes/` (~310 MB of wallpapers) — reinstall v
 ## Notes / gotchas
 
 - **`.hyde.zshrc` vs `user.zsh`** — HyDE's `conf.d/hyde/terminal.zsh` sources the
-  *first* match of `~/.hyde.zshrc`, `~/.user.zsh`, `$ZDOTDIR/user.zsh`. Since
+  _first_ match of `~/.hyde.zshrc`, `~/.user.zsh`, `$ZDOTDIR/user.zsh`. Since
   `~/.hyde.zshrc` exists, it wins and `user.zsh` is never read. Edit `.hyde.zshrc`.
 - **Two tracked symlinks use absolute paths** and assume this `$HOME`:
   - `zsh/.config/zsh/omz-custom/plugins/zsh-256color` -> `~/.oh-my-zsh/custom/plugins/zsh-256color`

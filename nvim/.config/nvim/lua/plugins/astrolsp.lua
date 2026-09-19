@@ -40,6 +40,9 @@ return {
     -- enable servers that you already have installed without mason
     servers = {
       "pyright",
+      -- Enabled here (via vim.lsp.enable) rather than by tailwind-tools, whose
+      -- own setup path uses the deprecated require("lspconfig") framework.
+      "tailwindcss",
     },
     -- customize language server configuration options passed to `lspconfig`
     ---@diagnostic disable: missing-fields

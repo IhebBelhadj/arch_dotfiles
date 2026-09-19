@@ -1,0 +1,8 @@
+# Starship prompt config.
+# HyDE points STARSHIP_CONFIG here (conf.d/hyde/prompt.zsh). Starship is chosen
+# over p10k whenever it is installed, so ~/.p10k.zsh is not what renders this
+# prompt. Everything not set here keeps starship's defaults.
+
+# No battery indicator in the prompt.
+[battery]
+disabled = true

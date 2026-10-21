@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# display-mode: switch between laptop and external screen setups, like
+# Win+P on Windows.
+#
+#   display-mode            pick a mode from a rofi menu
+#   display-mode <mode>     apply a mode directly
+#   display-mode --status   print the saved mode
+#
+# Modes: pc (laptop screen only), duplicate, extend, second (external only).
+#
+# The choice is not applied with one-off hyprctl calls, because every config
+# reload (each theme switch, each save of a config file) would undo it.
+# Instead it is written to a small state file and Hyprland is reloaded;
+# ~/.config/hypr/display_mode.lua reads that file on every load and turns it
+# into monitor rules, so the mode survives reloads.
+
+set -euo pipefail
+
+STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/display_mode"
+MODES=(pc duplicate extend second)
+
+declare -A LABELS=(
+    [pc]="󰌢  PC screen only"
+    [duplicate]="󰍺  Duplicate"
+    [extend]="󰍹  Extend"
+    [second]="󰶐  Second screen only"
+)
+
+notify() {
+    notify-send -a "Display" -i video-display "$@" 2>/dev/null || true
+}
+
+current_mode() {
+    sed -n 's/^mode=//p' "$STATE_FILE" 2>/dev/null || true
+}
+
+# Built-in panels are named eDP-*, LVDS-* or DSI-*; anything else is external.
+# `monitors all` includes disabled outputs, so a screen switched off by an
+# earlier mode is still found.
+detect_outputs() {
+    local names
+    names=$(hyprctl -j monitors all | jq -r '.[].name')
+    internal=$(grep -m1 -E '^(eDP|LVDS|DSI)-' <<<"$names" || true)
+    external=$(grep -v -E '^(eDP|LVDS|DSI)-' <<<"$names" | head -1 || true)
+}
+
+apply_mode() {
+    local mode=$1
+    detect_outputs
+
+    if [[ -z $internal || -z $external ]]; then
+        if [[ $mode != extend ]]; then
+            notify "No second screen" "Only one display is connected."
+            return 1
+        fi
+    fi
+
+    local previous
+    previous=$(current_mode)
+
+    mkdir -p "$(dirname "$STATE_FILE")"
+    printf 'mode=%s\ninternal=%s\nexternal=%s\n' "$mode" "$internal" "$external" >"$STATE_FILE"
+    hyprctl reload >/dev/null
+
+    # Hyprland withdraws a mirrored output's wl_output and does not announce
+    # it again when the mirror is lifted, so Waybar, wallpapers and other
+    # clients never see the screen and extend leaves it without a bar.
+    # Switching the output off and letting the config bring it back makes
+    # Hyprland announce it afresh.
+    if [[ $previous == duplicate && $mode != duplicate && $mode != pc ]]; then
+        sleep 0.5
+        wlr-randr --output "$external" --off
+        hyprctl reload >/dev/null
+    fi
+
+    notify "${LABELS[$mode]#*  }"
+}
+
+pick_mode() {
+    local current entries choice i
+    current=$(current_mode)
+    current=${current:-extend}
+
+    entries=""
+    for i in "${!MODES[@]}"; do
+        entries+="${LABELS[${MODES[$i]}]}"$'\n'
+        [[ ${MODES[$i]} == "$current" ]] && selected=$i
+    done
+
+    choice=$(printf '%s' "$entries" | rofi -dmenu -i \
+        -p "Project" \
+        -format i \
+        -selected-row "${selected:-2}" \
+        -theme "${ROFI_DISPLAY_MODE_STYLE:-clipboard}" \
+        -theme-str 'window { width: 22em; } listview { lines: 4; scrollbar: false; }' \
+        -theme-str 'entry { placeholder: "Display mode"; }') || exit 0
+
+    apply_mode "${MODES[$choice]}"
+}
+
+case "${1:-}" in
+"") pick_mode ;;
+--status) current_mode ;;
+pc | duplicate | extend | second) apply_mode "$1" ;;
+*)
+    echo "usage: $(basename "$0") [pc|duplicate|extend|second|--status]" >&2
+    exit 1
+    ;;
+esac

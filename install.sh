@@ -55,7 +55,7 @@ step_dotfiles() {
   # HyDE ships its own copies of these files; --adopt pulls whatever is on disk
   # into the repo and symlinks it, so check `git diff` afterwards and `git
   # checkout .` to keep THIS repo's version (which is almost always what you want).
-  stow --adopt -t "$HOME" hypr waybar kitty zsh tmux starship hyde nvim bin
+  stow --adopt -t "$HOME" hypr waybar kitty zsh tmux starship hyde nvim bin xdg
   echo ">> review: git -C $(pwd) diff     (then: git checkout . to keep the repo's version)"
   ./bootstrap.sh
 }

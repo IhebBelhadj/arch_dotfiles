@@ -72,7 +72,7 @@ then `git diff` to see whether you want the repo's version or the machine's.
 
 | Package    | Contents                                                                           |
 | ---------- | ---------------------------------------------------------------------------------- |
-| `hypr`     | `hyprland.lua` (monitor scale, scroll, caps/esc swap), `hyde.conf`, idle/sunset    |
+| `hypr`     | `hyprland.lua` (monitor scale, scroll, caps/esc swap, maximize + focus binds), `hyde.conf`, idle/sunset |
 | `waybar`   | `modules/network-override.json` (wifi picker on click), `user-style.css`           |
 | `kitty`    | `kitty.conf` (padding override)                                                    |
 | `zsh`      | `.hyde.zshrc` (the file HyDE actually sources), `user.zsh`, `.zshrc`, `omz-custom` |
@@ -81,6 +81,7 @@ then `git diff` to see whether you want the repo's version or the machine's.
 | `hyde`     | `config.toml` (animation `duration_scale`), `wallbash/` templates + scripts        |
 | `nvim`     | AstroNvim v6 config                                                                |
 | `bin`      | `wifimenu.sh` — rofi wifi picker used by waybar                                    |
+| `xdg`      | `mimeapps.list` — default apps (Chrome for web, zathura for PDF, dolphin for dirs) |
 
 ## What is deliberately NOT tracked
 
@@ -107,3 +108,14 @@ Also untracked: `~/.config/hyde/themes/` (~310 MB of wallpapers) — reinstall v
   - `nvim/.config/nvim/colors/wallbash.vim` -> `~/.config/vim/colors/wallbash.vim`
     (generated; create `~/.config/vim/colors/` then run `hyde-shell reload`)
 - **nvim plugins** are restored by lazy from `lazy-lock.json` on first launch.
+- **`SUPER + M` maximizes, it does not fullscreen** — it sets Hyprland fullscreen
+  *state 1*, which fills the workspace but keeps gaps and waybar's reserved
+  space. `SUPER + H/J/K/L` moves focus and carries the maximized slot with it,
+  which needs a handler in `hyprland.lua`: a maximized window covers the whole
+  monitor, and Hyprland picks the neighbour from window geometry, so a plain
+  movefocus finds nothing. The three HyDE binds this displaced now live on
+  `SUPER + SHIFT + L` (lock), `SUPER + SHIFT + J` (toggle split) and
+  `SUPER + ALT + K` (keyboard layout — `SUPER + SHIFT + K` is the calculator).
+- **`mimeapps.list` is rewritten by other apps.** Browsers and some GUI file
+  pickers write their own defaults into it, so it picks up churn on its own.
+  Check `git diff xdg/` before assuming a change was yours.
